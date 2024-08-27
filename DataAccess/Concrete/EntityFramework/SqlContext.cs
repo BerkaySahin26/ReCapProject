@@ -12,10 +12,10 @@ namespace DataAccess.Concrete.EntityFramework
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("@Server=DESKTOP-PRINCPR\\SQLEXPRESS02;Database=RecCapDB;Trusted_Connection=true");
+            optionsBuilder.UseSqlServer("server=DESKTOP-PRINCPR\\SQLEXPRESS02;database=RecCapDB;integrated security=true;");
 
         }
-        public DbSet<Car>Cars { get; set; }
+        public DbSet<Car> Cars { get; set; }
         public DbSet<Brand> Brands { get; set; } 
         public DbSet<Color> Colors { get; set; }
     
