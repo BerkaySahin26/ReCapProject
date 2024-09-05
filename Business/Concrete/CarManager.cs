@@ -1,4 +1,6 @@
 ﻿using Business.Abstract;
+using Business.Constans;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
@@ -7,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Business.Abstract;
 
 namespace Business.Concrete
 {
@@ -19,24 +22,41 @@ namespace Business.Concrete
             _CarDal = carDal;
         }
 
-        public List<Car> GetAll()
+        IDataResult<List<Car>> ICarService.GetAll()
         {
-           return _CarDal.GetAll();
+           if ( DateTime.Now.Hour ==18)
+            {
+                return new ErrorDataResult<List<Car>>(Messages.MaintenanceTime);
+            }
+           return new SuccessDataResult<List<Car>>(_CarDal.GetAll(),Messages.CarsListed);
         }
 
-        public List<Car> GetCarsByBrandId(int id)
+         IDataResult< List<Car>> ICarService.GetCarsByBrandId(int id)
         {
-           return _CarDal.GetAll(p=>p.BrandId == id);
+           return new SuccessDataResult<List<Car>> (_CarDal.GetAll(p=>p.BrandId == id));
         }
 
-        public List<Car> GetCarsByColorId(int id)
+         IDataResult< List<Car>> ICarService.GetCarsByColorId(int id)
         {
-           return _CarDal.GetAll(p=>p.ColorId == id);
+           return new SuccessDataResult<List<Car>>( _CarDal.GetAll(p=>p.ColorId == id));
         }
 
-        public List<CarDetailDto> GetCarDetails()
+       public IDataResult<List<CarDetailDto>> GetCarDetails()
         {
-            return _CarDal.GetCarDetails();
+            if (DateTime.Now.Hour == 17)
+            {
+                return new ErrorDataResult<List<CarDetailDto>>(Messages.MaintenanceTime);
+            }
+            return new SuccessDataResult<List<CarDetailDto>>(_CarDal.GetCarDetails(), Messages.CarsListed);
+        }
+        public IResult Add(Car car)
+        {
+            if (car.CarName.Length<2)
+            {
+                return new ErrorResult(Messages.CarNameInvalid);
+            }
+            _CarDal.Add(car);
+            return new SuccessResult(Messages.CarAdded);
         }
     }
 }
