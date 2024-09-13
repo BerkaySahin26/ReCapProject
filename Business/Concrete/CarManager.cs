@@ -10,10 +10,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Business.Abstract;
+using Core.Aspects.Autofac.Validation;
+using Business.ValidationRules.FluentValidation;
 
 namespace Business.Concrete
 {
-    public class CarManager : ICarService
+    public class CarManager :ICarService
     {
         ICarDal _CarDal;
 
@@ -49,19 +51,19 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<CarDetailDto>>(_CarDal.GetCarDetails(), Messages.CarsListed);
         }
+        [ValidationAspect(typeof(CarValidator))]
         public IResult Add(Car car)
         {
-            if (car.CarName.Length<2)
-            {
-                return new ErrorResult(Messages.CarNameInvalid);
-            }
+            
             _CarDal.Add(car);
             return new SuccessResult(Messages.CarAdded);
         }
 
         public IDataResult<List<Car>> GetById(int id)
         {
-            return new SuccessDataResult<List<Car>>(_CarDal.GetById(p => p.Id == id));
+            return new SuccessDataResult<List<Car>>(_CarDal.GetAll(p => p.Id == id));
         }
+
+       
     }
 }
