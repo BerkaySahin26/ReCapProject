@@ -24,12 +24,12 @@ namespace Business.Concrete
             _CarDal = carDal;
         }
 
-        IDataResult<List<Car>> ICarService.GetAll()
+        public IDataResult<List<Car>>GetAll()
         {
-           if ( DateTime.Now.Hour ==18)
-            {
-                return new ErrorDataResult<List<Car>>(Messages.MaintenanceTime);
-            }
+           //if ( DateTime.Now.Hour ==18)
+           // {
+           //     return new ErrorDataResult<List<Car>>(Messages.MaintenanceTime);
+           // }
            return new SuccessDataResult<List<Car>>(_CarDal.GetAll(),Messages.CarsListed);
         }
 

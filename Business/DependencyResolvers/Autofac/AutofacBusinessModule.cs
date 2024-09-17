@@ -1,18 +1,16 @@
-﻿using Autofac;
-using Autofac.Extras.DynamicProxy;
-using Business.Abstract;
-using Business.Concrete;
-using Castle.DynamicProxy;
-using Core.Utilities.Interceptors;
-using DataAccess.Abstract;
-using DataAccess.Concrete.EntityFramework;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+using Autofac;
 using System.Text;
 using System.Threading.Tasks;
-using Module = Autofac.Module;
+using Entities.Concrete;
+using Business.Abstract;
+using Business.Concrete;
+using DataAccess.Concrete.EntityFramework;
+using DataAccess.Abstract;
+using Autofac.Extras.DynamicProxy;
+using Castle.DynamicProxy;
+using Core.Utilities.Interceptors;// AspectInterceptorSelector ve diğer aspect'ler için
 
 namespace Business.DependencyResolvers.Autofac
 {
@@ -20,16 +18,21 @@ namespace Business.DependencyResolvers.Autofac
     {
         protected override void Load(ContainerBuilder builder)
         {
+            // Service ve Data erişim nesnelerinin kayıtları
             builder.RegisterType<CarManager>().As<ICarService>().SingleInstance();
             builder.RegisterType<EfCarDal>().As<ICarDal>().SingleInstance();
 
+            // Assembly içerisindeki tüm tipleri kayıt et
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 
-            builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
-                .EnableInterfaceInterceptors(new ProxyGenerationOptions()
+            builder.RegisterAssemblyTypes(assembly)
+                .AsImplementedInterfaces()
+                .EnableInterfaceInterceptors(new ProxyGenerationOptions
                 {
-                    Selector = new AspectInterceptorSelector()
-                }).SingleInstance();
+                    Selector = new AspectInterceptorSelector() // Interceptor seçim için gerekli
+                })
+                .SingleInstance();
         }
     }
 }
+

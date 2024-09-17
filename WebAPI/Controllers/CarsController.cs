@@ -1,5 +1,9 @@
 ﻿using Business.Abstract;
+using Business.Concrete;
+using Core.Utilities.Results;
+using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -14,13 +18,15 @@ namespace WebAPI.Controllers
         {
             _carService = carService;
         }
+
         [HttpGet("getall")]
         public IActionResult GetAll()
         {
-            var result = _carService.GetAll();  
-            if(result.Success) 
+
+            var result = _carService.GetAll();
+            if (result.Success)
             {
-            return Ok(result);
+                return Ok(result);
             }
             return BadRequest(result);
         }
@@ -29,7 +35,7 @@ namespace WebAPI.Controllers
         public IActionResult GetById(int id)
         {
 
-            var result = _carService.GetCarsByColorId(id);
+            var result = _carService.GetById(id);
             if (result.Success)
             {
                 return Ok(result);
@@ -50,3 +56,5 @@ namespace WebAPI.Controllers
         }
     }
 }
+
+

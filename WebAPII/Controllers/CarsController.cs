@@ -1,20 +1,28 @@
 ﻿using Business.Abstract;
+using Business.Concrete;
+using Core.Utilities.Results;
+using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebAPI.Controllers
+namespace WebAPII.Controllers
 {
-    public class UsersController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CarsController : ControllerBase
     {
-        IUserService _userService;
-        public UsersController(IUserService userService)
+        ICarService _carService;
+
+        public CarsController(ICarService carService)
         {
-            _userService = userService;
+            _carService = carService;
         }
         [HttpGet("getall")]
         public IActionResult GetAll()
         {
-            var result = _userService.GetAll();
+
+            var result = _carService.GetAll();
             if (result.Success)
             {
                 return Ok(result);
@@ -26,7 +34,7 @@ namespace WebAPI.Controllers
         public IActionResult GetById(int id)
         {
 
-            var result = _userService.GetById(id);
+            var result = _carService.GetById(id);
             if (result.Success)
             {
                 return Ok(result);
@@ -36,9 +44,9 @@ namespace WebAPI.Controllers
 
         [HttpPost("add")]
 
-        public IActionResult Add(User user)
+        public IActionResult Add(Car car)
         {
-            var result = _userService.Add(user);
+            var result = _carService.Add(car);
             if (result.Success)
             {
                 return Ok(result);
