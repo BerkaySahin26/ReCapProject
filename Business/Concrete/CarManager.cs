@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using Business.Abstract;
 using Core.Aspects.Autofac.Validation;
 using Business.ValidationRules.FluentValidation;
+using Core.Utilities.Business;
+using Business.BusinessAspects.Autofac;
 
 namespace Business.Concrete
 {
@@ -51,10 +53,15 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<CarDetailDto>>(_CarDal.GetCarDetails(), Messages.CarsListed);
         }
+        [SecuredOperation("car.add,admin")]
         [ValidationAspect(typeof(CarValidator))]
         public IResult Add(Car car)
         {
-            
+            IResult result = BusinessRules.Run(CheckIfCarNameExists(car.CarName));
+            if (result == null)
+            {
+                return result;
+            }
             _CarDal.Add(car);
             return new SuccessResult(Messages.CarAdded);
         }
@@ -64,6 +71,15 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Car>>(_CarDal.GetAll(p => p.Id == id));
         }
 
-       
+      
+       private IResult CheckIfCarNameExists(string carName)
+        {
+            var result = _CarDal.GetAll(c => c.CarName == carName).Any();
+            if (result)
+            {
+                return new ErrorResult(Messages.CarNameAlreadyExists);
+            }
+            return new SuccessResult();
+        }
     }
 }

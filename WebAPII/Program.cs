@@ -3,8 +3,14 @@ using Autofac.Extensions.DependencyInjection;
 using Business.Abstract;
 using Business.Concrete;
 using Business.DependencyResolvers.Autofac;
+using Core.Utilities.Security.Encryption;
+using Core.Utilities.Security.JWT;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using static Core.Utilities.Security.JWT.JwtHelper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,14 +22,28 @@ builder.Host.ConfigureContainer<ContainerBuilder>(builder =>
 {
     // Register services with Autofac
     builder.RegisterModule(new AutofacBusinessModule());
-
 });
 
 // Add services to the container
 builder.Services.AddControllers();
-// Uncomment and use the following lines if you want to register services manually
-// builder.Services.AddSingleton<IProductService, ProductManager>();
-// builder.Services.AddSingleton<IProductDal, EfProductDal>(); 
+
+// Configure JWT Authentication
+var tokenOptions = builder.Configuration.GetSection("TokenOptions").Get<TokenOptions>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidIssuer = tokenOptions.Issuer,
+            ValidAudience = tokenOptions.Audience,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
+        };
+    });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -39,7 +59,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication(); // Add this line to enable authentication
 app.UseAuthorization();
 app.MapControllers();
-
 app.Run();
