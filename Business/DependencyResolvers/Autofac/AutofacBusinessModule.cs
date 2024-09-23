@@ -10,7 +10,9 @@ using DataAccess.Concrete.EntityFramework;
 using DataAccess.Abstract;
 using Autofac.Extras.DynamicProxy;
 using Castle.DynamicProxy;
-using Core.Utilities.Interceptors;// AspectInterceptorSelector ve diğer aspect'ler için
+using Core.Utilities.Interceptors;
+using Core.Utilities.Security.JWT;
+using Microsoft.AspNetCore.Http;// AspectInterceptorSelector ve diğer aspect'ler için
 
 namespace Business.DependencyResolvers.Autofac
 {
@@ -22,6 +24,13 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<CarManager>().As<ICarService>().SingleInstance();
             builder.RegisterType<EfCarDal>().As<ICarDal>().SingleInstance();
 
+            builder.RegisterType<UserManager>().As<IUserService>();
+            builder.RegisterType<EfUserDal>().As<IUserDal>();
+
+            builder.RegisterType<AuthManager>().As<IAuthService>();
+            builder.RegisterType<JwtHelper>().As<ITokenHelper>();
+
+            builder.RegisterType<HttpContextAccessor>().As<IHttpContextAccessor>();
             // Assembly içerisindeki tüm tipleri kayıt et
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 
