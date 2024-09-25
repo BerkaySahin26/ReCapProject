@@ -14,6 +14,9 @@ using Core.Aspects.Autofac.Validation;
 using Business.ValidationRules.FluentValidation;
 using Core.Utilities.Business;
 using Business.BusinessAspects.Autofac;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Performance;
+using Core.Aspects.Autofac.Transaction;
 
 namespace Business.Concrete
 {
@@ -65,7 +68,8 @@ namespace Business.Concrete
             _CarDal.Add(car);
             return new SuccessResult(Messages.CarAdded);
         }
-
+        [CacheAspect]
+        [PerformanceAspect(5)]
         public IDataResult<List<Car>> GetById(int id)
         {
             return new SuccessDataResult<List<Car>>(_CarDal.GetAll(p => p.Id == id));
@@ -80,6 +84,24 @@ namespace Business.Concrete
                 return new ErrorResult(Messages.CarNameAlreadyExists);
             }
             return new SuccessResult();
+        }
+        [TransactionScopeAspect]
+        public IResult AddTransactionalTest(Car car)
+        {
+            Add(car);
+            if (car.DailyPrice < 10)
+            {
+                throw new Exception("");
+
+            }
+            Add(car);
+            return null;
+        }
+        [ValidationAspect(typeof(CarValidator))]
+        [CacheRemoveAspect("IProductService.Get")]
+        public IResult Update(Car car)
+        {
+            throw new NotImplementedException();
         }
     }
 }

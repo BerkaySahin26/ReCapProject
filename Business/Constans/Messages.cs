@@ -16,12 +16,14 @@ namespace Business.Constans
 
         public static string CarNameAlreadyExists = "Bu isimden var";
 
-        public static string? AuthorizationDenied { get; internal set; }
-        public static string UserRegistered { get; internal set; }
-        public static User UserNotFound { get; internal set; }
-        public static User PasswordError { get; internal set; }
-        public static string SuccessfulLogin { get; internal set; }
-        public static string UserAlreadyExists { get; internal set; }
-        public static string AccessTokenCreated { get; internal set; }
+        public static string AuthorizationDenied = "Yetkiniz yok";
+
+        public static string UserRegistered = "Kayıt Olundu";
+        public static string UserNotFound = "Kullanıcı bulunamadı";
+        public static string PasswordError = "Şifre hatası";
+        public static string SuccessfulLogin = "Başarılı giriş";
+
+        public static string UserAlreadyExists = "Kullanıcı Mevcut";
+        public static string AccessTokenCreated = " Kullanıcı token yaratıldı";
     }
 }
