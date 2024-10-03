@@ -1,4 +1,5 @@
-﻿using Business.Constans;
+﻿using Business.Abstract;
+using Business.Constans;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -10,23 +11,17 @@ using System.Threading.Tasks;
 
 namespace Business.Concrete
 {
-    public class ColorManager
+    public class ColorManager:IColorService
     {
-        IColorDal _ColorDal;
-
-
+        IColorDal _colorDal;
         public ColorManager(IColorDal colorDal)
         {
-            _ColorDal = colorDal;
+            _colorDal = colorDal;
         }
+
         public IResult Add(Color color)
         {
-            if (color.ColorName.Length < 2)
-            {
-                return new ErrorResult(Messages.CarNameInvalid);
-            }
-            _ColorDal.Add(color);
-            return new SuccessResult(Messages.CarAdded);
+            throw new NotImplementedException();
         }
 
         public IResult Delete(Color color)
@@ -36,12 +31,12 @@ namespace Business.Concrete
 
         public IDataResult<List<Color>> GetAll()
         {
-            return new SuccessDataResult<List<Color>>(_ColorDal.GetAll(), Messages.CarsListed);
+            return new SuccessDataResult<List<Color>>(_colorDal.GetAll());
         }
 
         public IDataResult<Color> GetById(int colorId)
         {
-            return new SuccessDataResult<Color>(_ColorDal.Get(p => p.ColorId == colorId));
+            return new SuccessDataResult<Color>(_colorDal.Get(c => c.ColorId == colorId));
         }
 
         public IResult Update(Color color)

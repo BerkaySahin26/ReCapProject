@@ -13,20 +13,15 @@ namespace Business.Concrete
 {
     public class BrandManager : IBrandService
     {
-        IBrandDal _BrandDal;
+        IBrandDal _brandDal;
 
         public BrandManager(IBrandDal brandDal)
         {
-            _BrandDal = brandDal;
+            _brandDal = brandDal;
         }
-        public IResult Add (Brand brand)
+        public IResult Add(Brand brand)
         {
-            if (brand.BrandName.Length<2)
-            {
-                return new ErrorResult(Messages.CarNameInvalid);
-            }
-            _BrandDal.Add(brand);
-            return new SuccessResult(Messages.CarAdded);
+            throw new NotImplementedException();
         }
 
         public IResult Delete(Brand brand)
@@ -36,12 +31,12 @@ namespace Business.Concrete
 
         public IDataResult<List<Brand>> GetAll()
         {
-           return new SuccessDataResult<List<Brand>>(_BrandDal.GetAll(),Messages.CarsListed);
+            return new SuccessDataResult<List<Brand>>(_brandDal.GetAll());
         }
 
         public IDataResult<Brand> GetById(int brandId)
         {
-            return new SuccessDataResult<Brand>(_BrandDal.Get(p => p.BrandId == brandId));
+            return new SuccessDataResult<Brand>(_brandDal.Get(c => c.BrandId == brandId));
         }
 
         public IResult Update(Brand brand)

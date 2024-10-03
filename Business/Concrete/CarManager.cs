@@ -23,10 +23,14 @@ namespace Business.Concrete
     public class CarManager :ICarService
     {
         ICarDal _CarDal;
+        IBrandService _brandService;
+        IColorService _colorService;
 
-        public CarManager(ICarDal carDal)
+        public CarManager(ICarDal carDal, IBrandService brandService, IColorService colorService)
         {
             _CarDal = carDal;
+            _brandService = brandService;
+            _colorService = colorService;
         }
 
         public IDataResult<List<Car>>GetAll()
@@ -38,19 +42,16 @@ namespace Business.Concrete
            return new SuccessDataResult<List<Car>>(_CarDal.GetAll(),Messages.CarsListed);
         }
 
-         IDataResult< List<Car>> ICarService.GetCarsByBrandId(int id)
+        public IDataResult<List<Car>> GetCarsByBrandId(int brandId)
         {
-           return new SuccessDataResult<List<Car>> (_CarDal.GetAll(p=>p.BrandId == id));
+            return new SuccessDataResult<List<Car>>(_CarDal.GetAll(p => p.BrandId == brandId).ToList());
         }
 
-         IDataResult< List<Car>> ICarService.GetCarsByColorId(int id)
-        {
-           return new SuccessDataResult<List<Car>>( _CarDal.GetAll(p=>p.ColorId == id));
-        }
+       
 
-       public IDataResult<List<CarDetailDto>> GetCarDetails()
+        public IDataResult<List<CarDetailDto>> GetCarDetails()
         {
-            if (DateTime.Now.Hour == 17)
+            if (DateTime.Now.Hour == 23)
             {
                 return new ErrorDataResult<List<CarDetailDto>>(Messages.MaintenanceTime);
             }
@@ -102,6 +103,11 @@ namespace Business.Concrete
         public IResult Update(Car car)
         {
             throw new NotImplementedException();
+        }
+
+        public IDataResult<List<Car>> GetCarsByColorId(int colorId)
+        {
+            return new SuccessDataResult<List<Car>>(_CarDal.GetAll(p => p.ColorId == colorId).ToList());
         }
     }
 }
